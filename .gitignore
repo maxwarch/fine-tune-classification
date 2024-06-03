@@ -6,6 +6,7 @@
 *.pot
 *.pyc
 *.csv
+!dataset.csv
 *.pickle
 __pycache__/
 local_settings.py
