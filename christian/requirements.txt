@@ -1,0 +1,7 @@
+pandas<3
+scikit-learn<2
+matplotlib<4
+seaborn
+numpy<2
+nltk
+scipy
