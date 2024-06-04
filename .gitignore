@@ -7,6 +7,7 @@
 *.pyc
 *.csv
 !dataset.csv
+!dataset_resume.csv
 *.pickle
 __pycache__/
 local_settings.py
