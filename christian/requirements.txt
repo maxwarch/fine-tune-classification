@@ -5,3 +5,7 @@ seaborn
 numpy<2
 nltk
 scipy
+transformers
+datasets
+evaluate
+accelerate
