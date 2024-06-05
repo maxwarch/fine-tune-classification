@@ -1,6 +1,5 @@
 from utils.environment import get_env
 
-# This example requires environment variables named "LANGUAGE_KEY" and "LANGUAGE_ENDPOINT"
 key = get_env("LANGUAGE_KEY")
 endpoint = get_env("LANGUAGE_ENDPOINT")
 
@@ -31,8 +30,6 @@ def summarize(docs: list, max_sentence_count: int = 5):
                 )
             )
         else:
-            # print("Summary extracted: \n{}")
-            # res.append([print(f"{summary.text}\n") for summary in extract_summary_result.summaries])
             res.append(extract_summary_result.summaries[0].text)
 
     return res
