@@ -1,6 +1,13 @@
+import os
+from typing import Optional
+
+from sklearn.model_selection import train_test_split
 from transformers import AutoTokenizer
-from datasets import Dataset
+
+import lightning as L
+from lightning.pytorch.utilities.types import TRAIN_DATALOADERS
 import torch
+from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from labels import LABELS
 
@@ -91,3 +98,45 @@ class EventTokenizeDataset(Dataset):
 
     def tokenized_str(self, input_id):
         return self.tokenizer.convert_ids_to_tokens(input_id.squeeze())
+
+
+class EventDataModule(L.LightningDataModule):
+    def __init__(
+        self, data: pd.DataFrame, tokenizer=None, batch_size: int = 10
+    ) -> None:
+        super().__init__()
+        self.prepare_data_per_node = False
+        self.data = data
+        self.tokenizer = tokenizer
+        self.batch_size = batch_size
+
+    def setup(self, stage: Optional[str] = None) -> None:
+        self.train_df, test_df = train_test_split(
+            self.data, test_size=0.2, random_state=42, shuffle=True
+        )
+
+        self.val_df, self.test_df = train_test_split(test_df, test_size=0.5)
+
+    def train_dataloader(self) -> torch.Any:
+        return DataLoader(
+            EventTokenizeDataset(self.train_df, self.tokenizer),
+            shuffle=True,
+            batch_size=self.batch_size,
+            num_workers=os.cpu_count(),
+        )
+
+    def test_dataloader(self) -> TRAIN_DATALOADERS:
+        return DataLoader(
+            EventTokenizeDataset(self.test_df, self.tokenizer),
+            shuffle=False,
+            batch_size=self.batch_size,
+            num_workers=os.cpu_count(),
+        )
+
+    def val_dataloader(self) -> torch.Any:
+        return DataLoader(
+            EventTokenizeDataset(self.val_df, self.tokenizer),
+            shuffle=False,
+            batch_size=self.batch_size,
+            num_workers=os.cpu_count(),
+        )
