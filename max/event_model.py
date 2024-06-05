@@ -1,4 +1,8 @@
+from pathlib import Path
+from typing import Optional, Union, Tuple
 import lightning as L
+from lightning.pytorch.utilities.types import OptimizerLRScheduler
+from torchmetrics.functional import accuracy
 import torch.nn as nn
 import torch
 from torchmetrics.functional.classification import multilabel_auroc
@@ -12,82 +16,91 @@ from labels import LABELS
 
 
 class EventClassifier(L.LightningModule):
-    def __init__(self, n_classes: int, n_training_steps=None, n_warmup_steps=None):
+    def __init__(self, n_classes: int):
         super().__init__()
+
         self.model = CamembertForSequenceClassification.from_pretrained(
             "camembert-base", problem_type="multi_label_classification"
         )
-        self.classifier = nn.Linear(self.model.config.hidden_size, n_classes)
-        self.n_training_steps = n_training_steps
-        self.n_warmup_steps = n_warmup_steps
-        self.criterion = nn.BCELoss()
+
+        self.input_key = "input_ids"
+        self.label_key = "labels"
+        self.mask_key = "attention_mask"
+        self.output_key = "logits"
+        self.loss_key = "loss"
+        self.accuracy = accuracy
+        self.learning_rate = 5e-05
         self.num_labels = n_classes
 
-    def forward(self, batch):
+    def forward(self, batch) -> torch.Any:
+        print(batch[self.label_key])
+        print(batch[self.input_key])
         output = self.model(
-            input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]
+            batch[self.input_key],
+            attention_mask=batch[self.mask_key],
+            labels=batch[self.label_key],
         )
+        print("***")
+        print(output)
         return output
 
-    def training_step(self, batch, batch_idx):
-        out = self.forward(batch)
-        logits = out.logits
-        # -------- MASKED --------
-        loss_fn = torch.nn.CrossEntropyLoss()
-        loss = loss_fn(logits.view(-1, self.num_labels), batch["labels"].view(-1))
+    def training_step(self, batch, batch_idx) -> torch.Tensor:
+        output = self(batch)
+        self.log("train-loss", output[self.loss_key])
 
-        # ------ END MASKED ------
+        return output[self.loss_key]
 
-        self.log("train/loss", loss)
-
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        out = self.forward(batch)
-        logits = out.logits
-        # -------- MASKED --------
-        loss_fn = torch.nn.CrossEntropyLoss()
-        loss = loss_fn(logits.view(-1, self.num_labels), batch["labels"].view(-1))
-
-        # ------ END MASKED ------
-
-        self.log("train/loss", loss)
-
-        return loss
-
-    def predict_step(self, batch, batch_idx):
-        """La fonction predict step facilite la prédiction de données. Elle est
-        similaire à `validation_step`, sans le calcul des métriques.
+    def validation_step(self, batch, batch_idx) -> None:
         """
-        out = self.forward(batch)
+        Notes:
+            https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#validation
+        """
+        output = self(batch)
+        self.log("val-loss", output[self.loss_key], prog_bar=True)
 
-        return torch.max(out.logits, -1).indices
-
-    def on_train_epoch_end(self, outputs):
-        labels = []
-        predictions = []
-        for output in outputs:
-            for out_labels in output["labels"].detach().cpu():
-                labels.append(out_labels)
-            for out_predictions in output["predictions"].detach().cpu():
-                predictions.append(out_predictions)
-        labels = torch.stack(labels).int()
-        predictions = torch.stack(predictions)
-        for i, name in enumerate(LABELS):
-            ml_auroc = multilabel_auroc(
-                predictions[:, i], labels[:, i], num_labels=len(LABELS), average="macro"
-            )
-            self.logger.experiment.add_scalar(
-                f"{name}_roc_auc/Train", ml_auroc, self.current_epoch
-            )
-
-    def configure_optimizers(self):
-        optimizer = AdamW(self.parameters(), lr=2e-5)
-        # scheduler = get_linear_schedule_with_warmup(
-        #     optimizer,
-        #     # num_warmup_steps=self.n_warmup_steps,
-        #     # num_training_steps=self.n_training_steps,
-        # )
-        return dict(
-            optimizer=optimizer  # , lr_scheduler=dict(scheduler=scheduler, interval="step")
+        logits = output[self.output_key]
+        predicted_labels = torch.argmax(logits, 1)
+        acc = self.accuracy(
+            predicted_labels,
+            batch[self.label_key],
+            num_classes=self.num_classes,
+            task="multilabel",
         )
+        self.log("val-acc", acc, prog_bar=True)
+
+    def test_step(self, batch, batch_idx) -> None:
+        """
+        Notes:
+            https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#testing
+        """
+        output = self(batch)
+
+        logits = output[self.output_key]
+        predicted_labels = torch.argmax(logits, 1)
+        acc = self.accuracy(
+            predicted_labels,
+            batch[self.label_key],
+            num_classes=self.num_classes,
+            task="multiclass",
+        )
+        self.log("test-acc", acc, prog_bar=True)
+
+    # def predict_step(
+    #     self, sequence: str, cache_dir: Union[str, Path] = Config.cache_dir
+    # ) -> str:
+    #     """
+    #     Notes:
+    #         https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#inference
+    #     """
+    #     batch = tokenize_text(sequence, model_name=self.model_name, cache_dir=cache_dir)
+    #     # autotokenizer may cause tokens to lose device type and cause failure
+    #     batch = batch.to(self.device)
+    #     outputs = self.model(batch[self.input_key])
+    #     logits = outputs[self.output_key]
+    #     predicted_label_id = torch.argmax(logits)
+    #     labels = {0: "negative", 1: "positive"}
+    #     return labels[predicted_label_id.item()]
+
+    def configure_optimizers(self) -> OptimizerLRScheduler:
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        return optimizer

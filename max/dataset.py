@@ -11,6 +11,10 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from labels import LABELS
 
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 
 class EventDataset:
     def __init__(self, data_path: str, do_clean=True) -> None:

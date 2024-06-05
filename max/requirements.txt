@@ -8,3 +8,4 @@ pandas
 datasets
 azure-ai-textanalytics
 lightning
+setfit
