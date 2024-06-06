@@ -9,3 +9,4 @@ datasets
 azure-ai-textanalytics
 lightning
 setfit
+transformers==4.40.2
