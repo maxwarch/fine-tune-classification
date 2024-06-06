@@ -13,3 +13,6 @@ datasets
 torch
 setfit
 imblearn
+keras
+tensorflow
+torch
