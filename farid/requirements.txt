@@ -1,4 +1,15 @@
-torch 
+accelerate
 transformers
 pandas
 scikit-learn
+json5
+gcsfs
+nltk
+seaborn
+matplotlib
+plotly
+tqdm
+datasets
+torch
+setfit
+imblearn
