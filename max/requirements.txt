@@ -9,4 +9,5 @@ datasets
 azure-ai-textanalytics
 lightning
 setfit
-transformers==4.40.2
+transformers[torch]
+#transformers==4.40.2
