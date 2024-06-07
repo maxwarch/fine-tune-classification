@@ -4,6 +4,7 @@
 lightning_logs
 mlruns
 runs
+results
 
 ### Django ###
 *.log
