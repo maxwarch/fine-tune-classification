@@ -16,3 +16,4 @@ imblearn
 keras
 tensorflow
 torch
+pytorch-lightning
