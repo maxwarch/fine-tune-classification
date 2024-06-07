@@ -275,6 +275,7 @@ pyrightconfig.json
 .condarc
 .config
 .docker
+.gitignore
 .hushlogin
 .jupyter
 .local
