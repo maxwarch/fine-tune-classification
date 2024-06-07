@@ -10,4 +10,5 @@ azure-ai-textanalytics
 lightning
 setfit
 transformers[torch]
+sentencepiece
 #transformers==4.40.2
