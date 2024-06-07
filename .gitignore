@@ -275,3 +275,20 @@ pyrightconfig.json
 
 *.pkl
 *.pickle
+.bashrc
+.condarc
+.config
+.docker
+.hushlogin
+.jupyter
+.local
+.oh-my-zsh
+.profile
+.ssh
+.sudo_as_admin_successful
+.zcompdump
+.zsh_history
+.zshrc
+.idea/this_studio.iml
+.lightning_studio/.studiorc
+.lightning_studio/on_start.sh
