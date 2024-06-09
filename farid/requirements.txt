@@ -17,3 +17,4 @@ keras
 tensorflow
 torch
 pytorch-lightning
+catboost
