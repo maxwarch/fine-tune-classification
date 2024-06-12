@@ -23,6 +23,6 @@ c.execute('SELECT * FROM evenements')
 rows = c.fetchall()
 st.write('Valeurs de texte dans la base de données :')
 for row in rows:
-    st.write(f'{row[0]} : {row[1]}')
+    st.write(f'{row[0]} : {row[1]} {row[2]} {row[3]} {row[4]} {row[5]} {row[6]}')
 
 conn.close()
