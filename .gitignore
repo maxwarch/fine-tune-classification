@@ -5,7 +5,7 @@ lightning_logs
 mlruns
 runs
 results
-camembert-tourism-events
+camembert-tourism-events*
 
 ### Django ###
 *.log
