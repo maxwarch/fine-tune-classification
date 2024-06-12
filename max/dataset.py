@@ -32,6 +32,7 @@ class EventDataset:
         self.df.dropna(subset=["description"], inplace=True)
 
         for label in LABELS:
+            print(label)
             self.df.insert(
                 self.df.shape[1],
                 label,
