@@ -1,20 +1,42 @@
+from pathlib import Path
 import urllib.parse
 import streamlit as st
 import sqlite3
 import requests
 import urllib
+from  dotenv import load_dotenv
+import os
 
 
-st.title("IA - Mise à jour des catégories")
+ENV = '.env'
+BASE_DIR = Path(__file__).absolute()
+load_dotenv(os.path.join(BASE_DIR.parent.parent, ENV))
+cle = os.environ.get('CLE')
+
+st.title("IA - Mise à jour des catégories2")
 
 conn = sqlite3.connect('evenements.db')
 c = conn.cursor()
 
 
-c.execute('SELECT * FROM ip')
-row = c.fetchone()
-ip = row[0]
+# obsolète
+# c.execute('SELECT * FROM ip')
+# row = c.fetchone()
+# ip = row[0]
 
+
+# récupération de l'IP
+headers = {
+    'Accept': 'application/vnd.github+json',
+    'Authorization': f'Bearer {cle}',
+    'X-GitHub-Api-Version': '2022-11-28',
+}
+
+response = requests.get('https://api.github.com/repos/maxwarch/fine-tune-classification/actions/variables', headers=headers)
+if response.status_code == 200:
+    events = response.json()
+    ip = events['variables'][0]['value']
+    print(">>>>>>>>>>IP>>>>>",ip)
 
 api_url = f"http://{ip}:8001/predict?text="
 if st.button('mise à jour des catégories'):
@@ -26,7 +48,7 @@ if st.button('mise à jour des catégories'):
         response = requests.post(url)
         if response.status_code == 200:
             events = response.json()
-            print(">>>>>>>>>>>>>>>>>", response, events)
+            
             cat = [0,1,2]
             for index in range(3):
                 label = events[index]['label']
