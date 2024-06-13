@@ -6,6 +6,7 @@ mlruns
 runs
 results
 camembert-tourism-events*
+deploy-aci.yaml
 
 ### Django ###
 *.log

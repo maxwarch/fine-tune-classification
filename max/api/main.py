@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 from transformers import logging as TFLogging
 from transformers import (
     CamembertForSequenceClassification,
@@ -30,9 +31,24 @@ def sort_by_score(data):
     return sorted(data, key=lambda item: item["score"], reverse=True)
 
 
-predict = pipeline(
-    task="text-classification", model=model, tokenizer=tokenizer, return_all_scores=True
-)
-preds = predict(text)
+def predict_fn(text):
+    predict = pipeline(
+        task="text-classification",
+        model=model,
+        tokenizer=tokenizer,
+        top_k=5,
+    )
+    return sort_by_score(predict(text)[0])
 
-print(sort_by_score(preds[0]))
+
+app = FastAPI()
+
+
+@app.post("/predict")
+def predict(text: str):
+    return predict_fn(text)
+
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
