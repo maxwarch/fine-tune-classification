@@ -4,6 +4,7 @@ import sqlite3
 st.title("Recherche d'évènements")
 st.write("P.O.C.")
 
+
 conn = sqlite3.connect('evenements.db')
 c = conn.cursor()
 
@@ -19,7 +20,21 @@ c.execute('''
     )
 ''')
 
-c.execute('SELECT * FROM evenements')
+
+cat1 = st.sidebar.selectbox("Catégorie 1", ('Action','Art','Atelier','Balade','Brocante','Concert','Conférence','Culture','Danse','Détente','Environnement','Exposition','Famille','Festival','Fête','Gastronomie','Histoire','Jeu','Marché','Santé','Spectacle','Sport','Théatre','Visite'))
+cat2 = st.sidebar.selectbox("Catégorie 2", ('', 'Action','Art','Atelier','Balade','Brocante','Concert','Conférence','Culture','Danse','Détente','Environnement','Exposition','Famille','Festival','Fête','Gastronomie','Histoire','Jeu','Marché','Santé','Spectacle','Sport','Théatre','Visite'))
+cat3 = st.sidebar.selectbox("Catégorie 3", ('', 'Action','Art','Atelier','Balade','Brocante','Concert','Conférence','Culture','Danse','Détente','Environnement','Exposition','Famille','Festival','Fête','Gastronomie','Histoire','Jeu','Marché','Santé','Spectacle','Sport','Théatre','Visite'))
+
+print(f'''
+          SELECT *
+          FROM evenements
+          WHERE cat1 = "{cat1}"
+          ''')
+c.execute(f'''
+          SELECT *
+          FROM evenements
+          WHERE cat1 = "{cat1}"
+          ''')
 rows = c.fetchall()
 st.write('Valeurs de texte dans la base de données :')
 for row in rows:

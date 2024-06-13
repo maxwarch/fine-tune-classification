@@ -10,7 +10,7 @@ c.execute('SELECT * FROM evenements')
 rows = c.fetchall()
 
 # Créer une liste de cases à cocher pour chaque ligne
-selected_rows = st.multiselect('Sélectionnez les lignes à supprimer :', [f'{row[1]} : {row[2]}' for row in rows])
+selected_rows = st.multiselect('Sélectionnez les lignes à supprimer :', [f'{row[0]} : [{row[1]}] {row[2]}' for row in rows])
 
 # Supprimer les lignes sélectionnées
 if st.button('Supprimer les lignes sélectionnées'):
