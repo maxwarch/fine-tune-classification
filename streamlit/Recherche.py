@@ -4,7 +4,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
 
 
-st.title("Recherche d'évènements2")
+st.title("Recherche d'évènements")
 
 
 conn = sqlite3.connect('evenements.db')
@@ -22,6 +22,18 @@ c.execute('''
     )
 ''')
 
+c.execute('''
+    CREATE TABLE IF NOT EXISTS ip (
+        ip TEXT NOT NULL
+    )
+''')
+c.execute('SELECT count(1) nb FROM ip')
+row = c.fetchone()
+if row[0] != 1:
+    c.execute('DELETE FROM ip')
+    c.execute('INSERT INTO ip VALUES ("0.0.0.0")')
+    conn.commit()
+
 
 cat1 = st.sidebar.selectbox("Catégorie 1", ('', 'Action','Art','Atelier','Balade','Brocante','Concert','Conférence','Culture','Danse','Détente','Environnement','Exposition','Famille','Festival','Fête','Gastronomie','Histoire','Jeu','Marché','Santé','Spectacle','Sport','Théatre','Visite'))
 cat2 = st.sidebar.selectbox("Catégorie 2", ('', 'Action','Art','Atelier','Balade','Brocante','Concert','Conférence','Culture','Danse','Détente','Environnement','Exposition','Famille','Festival','Fête','Gastronomie','Histoire','Jeu','Marché','Santé','Spectacle','Sport','Théatre','Visite'))
@@ -30,9 +42,9 @@ cat3 = st.sidebar.selectbox("Catégorie 3", ('', 'Action','Art','Atelier','Balad
 request = f'''
 SELECT *
   FROM evenements
- WHERE (cat1 = "{cat1}" OR "" = "{cat1}")
-   AND (cat2 = "{cat2}" OR "" = "{cat2}")
-   AND (cat3 = "{cat3}" OR "" = "{cat3}")
+ WHERE ("{cat1}" = "" OR cat1 = "{cat1}" OR cat2 = "{cat1}" OR cat3 = "{cat1}")
+   AND ("{cat2}" = "" OR cat1 = "{cat2}" OR cat2 = "{cat2}" OR cat3 = "{cat2}")
+   AND ("{cat3}" = "" OR cat1 = "{cat3}" OR cat2 = "{cat3}" OR cat3 = "{cat3}")
 '''
 print(request)
 
@@ -44,10 +56,10 @@ st.write(f"Nombre d'occurence dans la BDD : {len(rows)}")
 #     st.write(f'{row[0]} : {row[1]} {row[2]} {row[3]} {row[4]} {row[5]} {row[6]}')
 
 # Convertir les résultats en DataFrame
-df = pd.DataFrame(rows, columns=['ID', 'URL', 'Title', 'Description', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3'])
+df = pd.DataFrame(rows, columns=['ID', 'URL', 'Titre', 'Description', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3'])
 
 # Configurer AgGrid
-gb = GridOptionsBuilder.from_dataframe(df)
+gb = GridOptionsBuilder.from_dataframe(df[['Titre', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3']])
 gb.configure_selection('single', use_checkbox=True, groupSelectsChildren=True)
 gridOptions = gb.build()
 
@@ -66,17 +78,12 @@ grid_response = AgGrid(
 # Récupérer les données de la ligne sélectionnée
 selected_rows = grid_response['selected_rows']
 
-if selected_rows:
-    print(">>>>>>>>>>>>", selected_rows)
-    # selected_row = selected_rows[0]
-    # st.subheader("Détails de l'évènement sélectionné")
-    # st.text(f"ID: {selected_row['ID']}")
-    # st.text(f"URL: {selected_row['URL']}")
-    # st.text(f"Title: {selected_row['Title']}")
-    # st.text(f"Description: {selected_row['Description']}")
-    # st.text(f"Catégorie 1: {selected_row['Catégorie 1']}")
-    # st.text(f"Catégorie 2: {selected_row['Catégorie 2']}")
-    # st.text(f"Catégorie 3: {selected_row['Catégorie 3']}")
+if selected_rows is not None:
+    st.subheader("Détails de l'évènement sélectionné")
+    st.text(f"[{selected_rows.iloc[0][0]}] {selected_rows.iloc[0][1]}")
+    st.text(f"{selected_rows.iloc[0][2]}")
+    st.write(f"{selected_rows.iloc[0][3]}")
+    
 
 
 conn.close()
