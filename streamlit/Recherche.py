@@ -4,7 +4,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
 
 
-st.title("Recherche d'évènements")
+st.title("Recherche d'évènements2")
 
 
 conn = sqlite3.connect('evenements.db')
