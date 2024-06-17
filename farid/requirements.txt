@@ -18,3 +18,4 @@ tensorflow
 torch
 pytorch-lightning
 catboost
+sentencepiece
