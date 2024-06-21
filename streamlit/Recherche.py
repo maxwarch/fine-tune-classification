@@ -56,7 +56,9 @@ st.write(f"Nombre d'occurence dans la BDD : {len(rows)}")
 #     st.write(f'{row[0]} : {row[1]} {row[2]} {row[3]} {row[4]} {row[5]} {row[6]}')
 
 # Convertir les résultats en DataFrame
+s.write('avant DF')
 df = pd.DataFrame(rows, columns=['ID', 'URL', 'Titre', 'Description', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3'])
+s.write('après DF')
 
 # Configurer AgGrid
 gb = GridOptionsBuilder.from_dataframe(df[['Titre', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3']])

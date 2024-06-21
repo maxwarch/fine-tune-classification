@@ -4,6 +4,15 @@ evenements.db
 # Created by https://www.toptal.com/developers/gitignore/api/python,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django
 
+lightning_logs
+mlruns
+runs
+results
+camembert-tourism-events*
+deploy-aci.yaml
+.lightning_studio
+.idea
+
 ### Django ###
 *.log
 *.pot
