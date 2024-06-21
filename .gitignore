@@ -7,6 +7,8 @@ runs
 results
 camembert-tourism-events*
 deploy-aci.yaml
+.lightning_studio
+.idea
 
 ### Django ###
 *.log
