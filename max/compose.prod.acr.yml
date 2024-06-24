@@ -9,4 +9,4 @@ services:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8001:8001"
