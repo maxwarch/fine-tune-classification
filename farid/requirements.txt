@@ -1,0 +1,16 @@
+accelerate
+transformers
+pandas
+scikit-learn
+json5
+gcsfs
+nltk
+plotly
+tqdm
+datasets
+torch
+keras
+tensorflow
+torch
+pytorch-lightning
+sentencepiece
