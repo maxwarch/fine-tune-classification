@@ -50,34 +50,40 @@ print(request)
 
 c.execute(request)
 rows = c.fetchall()
-
 st.write(f"Nombre d'occurence dans la BDD : {len(rows)}")
-col1, col2 = st.columns(2)
-buttons = []
 
-with col1:
-    st.header("Liste des évènements")
+# for row in rows:
+#     st.write(f'{row[0]} : {row[1]} {row[2]} {row[3]} {row[4]} {row[5]} {row[6]}')
 
-    # for row in rows:
-    #     st.write(f'{row[0]} : {row[1]} {row[2]} {row[3]} {row[4]} {row[5]} {row[6]}')
+# Convertir les résultats en DataFrame
+df = pd.DataFrame(rows, columns=['ID', 'URL', 'Titre', 'Description', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3'])
 
-    # Convertir les résultats en DataFrame
-    df = pd.DataFrame(rows, columns=['ID', 'URL', 'Titre', 'Description', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3'])
+# Configurer AgGrid
+gb = GridOptionsBuilder.from_dataframe(df[['Titre', 'Catégorie 1', 'Catégorie 2', 'Catégorie 3']])
+gb.configure_selection('single', use_checkbox=True, groupSelectsChildren=True)
+gridOptions = gb.build()
 
-    for row in rows:
-        st.write(f"{row[2]} [{row[4]}|{row[5]}|{row[6]}]")
-        buttons.append(st.button("Afficher", key=row[0]))
+# Afficher les résultats dans un tableau interactif
+grid_response = AgGrid(
+    df,
+    gridOptions=gridOptions,
+    update_mode=GridUpdateMode.SELECTION_CHANGED,
+    data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+    fit_columns_on_grid_load=True,
+    enable_enterprise_modules=True,
+    height=350,
+    width='100%',
+)
+
+# Récupérer les données de la ligne sélectionnée
+selected_rows = grid_response['selected_rows']
+
+if selected_rows is not None:
+    st.subheader("Détails de l'évènement sélectionné")
+    st.text(f"[{selected_rows.iloc[0][0]}] {selected_rows.iloc[0][1]}")
+    st.text(f"{selected_rows.iloc[0][2]}")
+    st.write(f"{selected_rows.iloc[0][3]}")
     
-
-with col2:
-    st.header("Informations")
-    for index, button in enumerate(buttons):
-        if button:
-            row = rows[index]
-            st.write(f"{row[1]}")
-            st.write(f"{row[2]}")
-            st.write(f"{row[4]} | {row[5]} | {row[6]}")
-            st.write(f"{row[3]}")
 
 
 conn.close()
