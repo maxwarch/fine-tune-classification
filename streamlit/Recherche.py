@@ -171,14 +171,11 @@ with col1:
     )
 
     for row in rows:
-        st.html(
-            f"""{row[2]} 
-                    <ul style="padding-left:30px">
-                        <li>{row[4]}: {floor(row[7] * 100)}%</li>
-                        <Li>{row[5]}: {floor(row[8] * 100)}%</li>
-                        <li>{row[6]}: {floor(row[9] * 100)}%</li>
-                    </ul>"""
-        )
+        st.markdown(row[2])
+        st.markdown(f'''
+        - {row[4]}: {floor(row[7] * 100)}%
+        - {row[5]}: {floor(row[8] * 100)}%
+        - {row[6]}: {floor(row[9] * 100)}%''')
         buttons.append(st.button("Afficher", key=row[0]))
 
 
