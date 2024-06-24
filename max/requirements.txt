@@ -6,3 +6,10 @@ seaborn
 numpy
 pandas
 datasets
+azure-ai-textanalytics
+lightning
+setfit
+transformers[torch]
+sentencepiece
+ollama
+#transformers==4.40.2

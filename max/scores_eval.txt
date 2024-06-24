@@ -1,0 +1,40 @@
+8 batch
+    128 token
+    {'eval_loss': 0.16654522716999054,
+    'eval_roc_auc': 0.7381359403458427,
+    'eval_hamming_loss': 0.060897435897435896,
+    'eval_f1': 0.5298769428026394,
+    'eval_runtime': 0.2273,
+    'eval_samples_per_second': 343.211,
+    'eval_steps_per_second': 44.001,
+    'epoch': 24.0}
+
+    256 token 50s
+    {'eval_loss': 0.16454270482063293,
+    'eval_roc_auc': 0.7410069525684347,
+    'eval_hamming_loss': 0.060897435897435896,
+    'eval_f1': 0.5236623717761825,
+    'eval_runtime': 0.3977,
+    'eval_samples_per_second': 196.12,
+    'eval_steps_per_second': 25.144,
+    'epoch': 7.0}
+
+12 batch
+    256 token
+    {'eval_loss': 0.1634947657585144,
+    'eval_roc_auc': 0.7785957289906437,
+    'eval_hamming_loss': 0.05929487179487179,
+    'eval_f1': 0.5798166998090933,
+    'eval_runtime': 0.3846,
+    'eval_samples_per_second': 202.803,
+    'eval_steps_per_second': 18.2,
+    'epoch': 7.0}
+
+    {'eval_loss': 0.16165791451931,
+    'eval_roc_auc': 0.775383774482571,
+    'eval_hamming_loss': 0.060897435897435896,
+    'eval_f1': 0.5739976332598848,
+    'eval_runtime': 0.3818,
+    'eval_samples_per_second': 204.294,
+    'eval_steps_per_second': 18.334,
+    'epoch': 43.0}

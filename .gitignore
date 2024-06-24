@@ -1,12 +1,22 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django
 
+lightning_logs
+mlruns
+runs
+results
+camembert-tourism-events*
+deploy-aci.yaml
+.lightning_studio
+.idea
+
 ### Django ###
 *.log
 *.pot
 *.pyc
 *.csv
 !dataset.csv
+!dataset_resume.csv
 *.pickle
 __pycache__/
 local_settings.py
@@ -275,7 +285,6 @@ pyrightconfig.json
 .condarc
 .config
 .docker
-.gitignore
 .hushlogin
 .jupyter
 .local
