@@ -7,3 +7,6 @@ https://zippy-twig-11a.notion.site/Brief-pour-le-D-veloppement-d-un-Proof-of-Con
 
 # Web
 * Le projet de Jérémy avec Keras et TensorFlow https://github.com/jeremy-vangansberg/machine-failure-classifier/blob/main/model/training.ipynb
+
+# Présentation 
+* https://docs.google.com/presentation/d/13ibOd2AS6xYvVHIo5Lqy7IOUZZKKXjbhWD24kXAgkWE/edit#slide=id.p
